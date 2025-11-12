@@ -12,7 +12,9 @@ import Header from "./components/organisms/Header";
 import Carrito from "./components/pages/Carrito";
 import BoletaPage from "./components/pages/BoletaPage";
 import PerfilUsuario from "./components/pages/PerfilUsuario";
+import React from "react";
 
+//gfjgnbkbnk
 function App() {
   const [isLogged, setIsLogged] = useState(false);
   const [showLogin, setShowLogin] = useState(true);
