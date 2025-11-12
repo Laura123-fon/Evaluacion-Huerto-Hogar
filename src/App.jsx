@@ -12,9 +12,11 @@ import Header from "./components/organisms/Header";
 import Carrito from "./components/pages/Carrito";
 import BoletaPage from "./components/pages/BoletaPage";
 import PerfilUsuario from "./components/pages/PerfilUsuario";
-import React from "react";
 
-//gfjgnbkbnk
+// 🔹 Importa los componentes del sistema de libros
+import BookList from "./components/BookList";
+import BookForm from "./components/BookForm";
+
 function App() {
   const [isLogged, setIsLogged] = useState(false);
   const [showLogin, setShowLogin] = useState(true);
@@ -61,6 +63,12 @@ function App() {
                 <Route path="/carrito" element={<Carrito />} />
                 <Route path="/boleta" element={<BoletaPage />} />
                 <Route path="/perfil" element={<PerfilUsuario onLogout={handleLogout} />} />
+
+                {/* 🔹 Agregamos las rutas del sistema de libros */}
+                <Route path="/books" element={<BookList />} />
+                <Route path="/books/add" element={<BookForm />} />
+                <Route path="/books/edit/:id" element={<BookForm />} />
+
                 <Route path="*" element={<Navigate to="/" replace />} />
               </>
             )}
