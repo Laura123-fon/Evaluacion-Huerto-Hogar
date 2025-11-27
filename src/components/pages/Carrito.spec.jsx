@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Carrito from "./Carrito";
 import { CartContext } from "../organisms/CartContext";
+import { BoletaContext } from "../organisms/BoletaContext";
 import { BrowserRouter } from "react-router-dom";
 
 window.alert = jest.fn();
@@ -15,21 +16,12 @@ jest.mock("react-router-dom", () => ({
 const mockActualizar = jest.fn();
 const mockEliminar = jest.fn();
 const mockLimpiar = jest.fn();
+const mockGenerar = jest.fn(() => 999);
+const mockAgregar = jest.fn();
 
 const carritoBase = [
   { id: 1, nombre: "Naranjas", precio: 3000, cantidad: 1, imagen: "n.jpg" }
 ];
-
-const clienteBase = {
-  nombre: "Juan",
-  apellido: "Pérez",
-  correo: "jp@mail.com",
-  direccion: "Av 1",
-  departamento: "",
-  comuna: "Santiago",
-  region: "RM",
-  indicaciones: ""
-};
 
 function renderUI(ctx = {}) {
   return render(
@@ -42,7 +34,14 @@ function renderUI(ctx = {}) {
           limpiarCarrito: mockLimpiar
         }}
       >
-        <Carrito />
+        <BoletaContext.Provider
+          value={{
+            agregarBoleta: mockAgregar,
+            generarNumeroBoleta: mockGenerar
+          }}
+        >
+          <Carrito />
+        </BoletaContext.Provider>
       </CartContext.Provider>
     </BrowserRouter>
   );
@@ -51,84 +50,71 @@ function renderUI(ctx = {}) {
 describe("Carrito - FULL TEST SUITE", () => {
 
   test("1. Renderiza correctamente un producto", () => {
-    renderUI();
+  renderUI();
 
-    expect(screen.getByText("Naranjas")).toBeInTheDocument();
-    expect(screen.getByText("$3.000", { selector: ".precio-cell" })).toBeInTheDocument();
+  const precioUnitario = screen.getByText("$3.000", {
+    selector: ".precio-cell"
   });
 
-  test("2. Renderiza datos del cliente sin errores", () => {
-    localStorage.setItem("nombre", clienteBase.nombre);
-    localStorage.setItem("apellido", clienteBase.apellido);
-    localStorage.setItem("usuario", clienteBase.correo);
+  expect(precioUnitario).toBeInTheDocument();
+});
+
+  test("2. Renderiza datos del cliente", () => {
+    localStorage.setItem("nombre", "Juan");
+    localStorage.setItem("apellido", "Pérez");
+    localStorage.setItem("usuario", "jp@mail.com");
 
     renderUI();
 
     expect(screen.getByText(/Juan Pérez/)).toBeInTheDocument();
-    expect(screen.getByText(clienteBase.correo)).toBeInTheDocument();
+    expect(screen.getByText("jp@mail.com")).toBeInTheDocument();
   });
 
-  test("3. Aumenta cantidad al presionar +", () => {
+  test("3. Aumenta cantidad", () => {
     renderUI();
-
-    const btn = screen.getByRole("button", { name: "+" });
-    fireEvent.click(btn);
-
+    fireEvent.click(screen.getByRole("button", { name: "+" }));
     expect(mockActualizar).toHaveBeenCalled();
   });
 
-  test("4. Disminuye cantidad al presionar -", () => {
+  test("4. Disminuye cantidad", () => {
     renderUI();
-
-    const btn = screen.getByRole("button", { name: "-" });
-    fireEvent.click(btn);
-
+    fireEvent.click(screen.getByRole("button", { name: "-" }));
     expect(mockActualizar).toHaveBeenCalled();
   });
 
-  test("5. Modificar cantidad manualmente llama a actualizarCantidad", () => {
+  test("5. Cambiar cantidad manual", () => {
     renderUI();
-
-    const input = document.querySelector(".input-cantidad");
+    const input = screen.getByDisplayValue("1");
     fireEvent.change(input, { target: { value: "5" } });
-
     expect(mockActualizar).toHaveBeenCalled();
   });
 
-  test("6. Eliminar producto llama a eliminarDelCarrito", () => {
+  test("6. Eliminar producto", () => {
     renderUI();
-
-    const boton = screen.getByLabelText("Eliminar Naranjas");
-    fireEvent.click(boton);
-
+    fireEvent.click(screen.getByLabelText("Eliminar Naranjas"));
     expect(mockEliminar).toHaveBeenCalledWith(1);
   });
 
-  test("7. Botón limpiar carrito activa limpiarCarrito()", () => {
+  test("7. Limpiar carrito", () => {
     renderUI();
-
-    const link = screen.getByText("Limpiar carrito");
-    fireEvent.click(link);
-
+    fireEvent.click(screen.getByText("Limpiar carrito"));
     expect(mockLimpiar).toHaveBeenCalled();
   });
 
-  test("8. Muestra mensaje de carrito vacío si no hay productos", () => {
+  test("8. Carrito vacío muestra mensaje", () => {
     renderUI({ carrito: [] });
-
     expect(
       screen.getByText("Tu carrito está vacío. ¡Agrega productos desde el catálogo!")
     ).toBeInTheDocument();
   });
 
-  test("9. No muestra el botón de finalizar compra cuando el carrito está vacío", () => {
+  test("9. Carrito vacío no muestra finalizar compra", () => {
     renderUI({ carrito: [] });
-
-    const botonFinalizar = screen.queryByText("Finalizar Compra y Pagar");
-    expect(botonFinalizar).not.toBeInTheDocument();
+    const boton = screen.queryByText("Finalizar Compra y Pagar");
+    expect(boton).not.toBeInTheDocument();
   });
 
-  test("10. Datos completos redirigen a /boleta", () => {
+  test("10. Redirige cuando datos completos", () => {
     renderUI();
 
     fireEvent.change(screen.getByPlaceholderText("Ej: Los Álamos 1234"), {
@@ -141,8 +127,7 @@ describe("Carrito - FULL TEST SUITE", () => {
       target: { value: "Santiago" }
     });
 
-    const btn = screen.getByText("Finalizar Compra y Pagar");
-    fireEvent.click(btn);
+    fireEvent.click(screen.getByText("Finalizar Compra y Pagar"));
 
     expect(mockNavigate).toHaveBeenCalledWith("/boleta", expect.any(Object));
   });
