@@ -9,8 +9,8 @@ export default function Header({ onLogout }) {
       <nav className="header__nav">
         <Link to="/">Inicio</Link>
         <Link to="/catalog">Catálogo</Link>
-        <Link to="/carrito">Carrito</Link>
-        <Link to="/boleta">Boleta</Link>
+        <Link to="/carrito"  className="cart-link">Carrito</Link>
+        <Link to="/historial">Historial de Boletas</Link>
         <Link to="/perfil">Perfil</Link>
       </nav>
     </header>

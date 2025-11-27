@@ -1,34 +1,63 @@
-import React, { useEffect, useState, useContext } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { CartContext } from "../organisms/CartContext";
-import Boleta from "../organisms/Boleta";
+import React, { useContext } from "react";
+import { BoletaContext } from "../organisms/BoletaContext.jsx";
 
 export default function BoletaPage() {
-  const { carrito } = useContext(CartContext);
-  const location = useLocation();
-  const navigate = useNavigate(); 
-  const [cliente, setCliente] = useState(location.state?.cliente || {});
-  const [fecha, setFecha] = useState("");
-  const [numeroBoleta, setNumeroBoleta] = useState(Math.floor(Math.random() * 1000000));
-  const metodoPago = location.state?.metodoPago || "Tarjeta";
+  const { historialBoletas } = useContext(BoletaContext);
 
-  useEffect(() => {
-    const hoy = new Date();
-    const fechaFormateada = `${hoy.getDate()}/${hoy.getMonth() + 1}/${hoy.getFullYear()}`;
-    setFecha(fechaFormateada);
-  }, []);
-
-  const handleClose = () => {
-    navigate("/carrito"); 
-  };
   return (
-    <Boleta
-      cliente={cliente}
-      carrito={location.state?.carrito || carrito}
-      fecha={fecha}
-      numeroBoleta={numeroBoleta}
-      metodoPago={metodoPago}
-       onClose={handleClose}
-    />
+    <div className="historial-container">
+      <div>
+        <h2>Historial de Boletas</h2>
+
+        {historialBoletas.length === 0 ? (
+          <div className="historial-vacio">
+            <p>¡Aún no hay compras!</p>
+            <p>No hay boletas registradas en tu historial.</p>
+          </div>
+        ) : (
+          <ul className="historial-lista">
+            {historialBoletas.map((b, index) => (
+              <li key={b.numero || index}>
+                <div>
+                  <p>Número de Boleta</p>
+                  <strong>{b.numero}</strong>
+                </div>
+
+                <div>
+                  <p>Fecha</p>
+                  <span>{b.fecha}</span>
+                </div>
+
+                <div>
+                  <p>Cliente</p>
+                  <strong>
+                    {b.cliente.nombre} {b.cliente.apellido}
+                  </strong>
+                </div>
+
+                <div className="historial-productos-detalle">
+                  <p>Productos:</p>
+                  <ul>
+                    {b.productos.map((p) => (
+                      <li key={p.id}>
+                        <span>
+                          {p.nombre} x{p.cantidad}
+                        </span>
+                        <span>${p.precio.toLocaleString("es-CL")}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="historial-total">
+                  <span>Total:</span>
+                  <span>${b.total.toLocaleString("es-CL")}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
   );
 }

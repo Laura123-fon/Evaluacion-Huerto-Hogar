@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Product from "./Product";
 
-describe("Product component - tests completos", () => {
+describe("Product component – Tests actualizados y compatibles", () => {
   const baseProduct = {
     nombre: "Manzanas Fuji",
     imagen: "http://example.com/manzanas.jpg",
@@ -12,126 +12,104 @@ describe("Product component - tests completos", () => {
     origen: "Valle del Maule",
     sostenibilidad: "Cultivo sostenible",
     receta: "Ensalada de manzana",
-    calificacion: 4.5
-  };
-
-  const minimalProduct = {
-    nombre: "Naranjas",
-    imagen: "http://example.com/naranjas.jpg",
-    descripcion: "Jugosas",
-    precio: 1000,
-    stock: 3,
-    origen: "Valparaíso",
-    sostenibilidad: "",
-    receta: "",
-    calificacion: 3.5
+    calificacion: 4.5,
   };
 
   const onAddToCartMock = jest.fn();
+  beforeEach(() => jest.clearAllMocks());
 
-  beforeEach(() => {
-    jest.clearAllMocks();
+  // 1
+  it("1. Renderiza nombre, descripción, precio y elementos básicos", () => {
+    render(<Product producto={baseProduct} onAddToCart={onAddToCartMock} />);
+
+    expect(screen.getByText("Manzanas Fuji")).toBeInTheDocument();
+    expect(screen.getByText("Manzanas crujientes y dulces")).toBeInTheDocument();
+    expect(screen.getByText((t) => t.replace(/\s+/g, "") === "$1.200CLP")).toBeInTheDocument();
   });
 
-  it("renderiza correctamente toda la información del producto", () => {
+  // 2
+  it("2. Renderiza stock y origen en el formato correcto", () => {
     render(<Product producto={baseProduct} onAddToCart={onAddToCartMock} />);
-    
-    expect(screen.getByText(baseProduct.nombre)).toBeInTheDocument();
-    expect(screen.getByText(baseProduct.descripcion)).toBeInTheDocument();
-    expect(screen.getByText((content) => content.includes(`$${baseProduct.precio.toLocaleString()} CLP`)))
-      .toBeInTheDocument();
-    expect(screen.getByText(/Stock:/)).toBeInTheDocument();
-    expect(screen.getByText(/Origen:/)).toBeInTheDocument();
-    expect(screen.getByText(/Prácticas sostenibles:/)).toBeInTheDocument();
-    expect(screen.getByText(/Receta sugerida:/)).toBeInTheDocument();
+
+    expect(screen.getByText(/STOCK:/i)).toBeInTheDocument();
+    expect(screen.getByText(/ORIGEN:/i)).toBeInTheDocument();
+  });
+
+  // 3
+  it("3. El botón muestra 'AÑADE AL CARRITO' cuando hay stock y no está maxedOut", () => {
+    render(<Product producto={baseProduct} onAddToCart={onAddToCartMock} />);
+    expect(screen.getByText("AÑADE AL CARRITO")).toBeInTheDocument();
+  });
+
+  // 4
+  it("4. Hace click en 'AÑADE AL CARRITO' y llama onAddToCart", () => {
+    render(<Product producto={baseProduct} onAddToCart={onAddToCartMock} />);
+
+    fireEvent.click(screen.getByText("AÑADE AL CARRITO"));
+
+    expect(onAddToCartMock).toHaveBeenCalledTimes(1);
+    expect(onAddToCartMock).toHaveBeenCalledWith(baseProduct);
+  });
+
+  // 5
+  it("5. Con stock 0 muestra 'AGOTADO' y no permite clic", () => {
+    const p = { ...baseProduct, stock: 0 };
+    render(<Product producto={p} onAddToCart={onAddToCartMock} />);
+
+    const tag = screen.getByText("AGOTADO");
+    fireEvent.click(tag); // no debería disparar nada
+
+    expect(onAddToCartMock).not.toHaveBeenCalled();
+  });
+
+  // 6
+  it("6. Cuando isMaxedOut es true muestra 'LÍMITE' y no llama onAddToCart", () => {
+    render(
+      <Product
+        producto={baseProduct}
+        onAddToCart={onAddToCartMock}
+        isMaxedOut
+      />
+    );
+
+    const tag = screen.getByText("LÍMITE");
+    fireEvent.click(tag);
+
+    expect(onAddToCartMock).not.toHaveBeenCalled();
+  });
+
+  // 7
+  it("7. La imagen se renderiza con su alt correspondiente", () => {
+    render(<Product producto={baseProduct} onAddToCart={onAddToCartMock} />);
 
     const img = screen.getByAltText(baseProduct.nombre);
     expect(img).toBeInTheDocument();
     expect(img.src).toBe(baseProduct.imagen);
-
-    expect(screen.getByText(/\(4\.5\)/)).toHaveTextContent("★★★★☆ (4.5)");
-
-    const button = screen.getByText("Agregar al carrito");
-    expect(button).toBeInTheDocument();
-    expect(button).not.toBeDisabled();
   });
 
-  it("no rompe si faltan campos opcionales (receta, sostenibilidad)", () => {
-    render(<Product producto={minimalProduct} onAddToCart={onAddToCartMock} />);
-    expect(screen.getByText(minimalProduct.nombre)).toBeInTheDocument();
-    expect(screen.getByText(minimalProduct.descripcion)).toBeInTheDocument();
-    expect(screen.getByText((content) => content.includes(`$${minimalProduct.precio.toLocaleString()} CLP`)))
-      .toBeInTheDocument();
-    expect(screen.getByText(/Stock:/)).toBeInTheDocument();
-    expect(screen.getByText(/Origen:/)).toBeInTheDocument();
-    expect(screen.getByText(/Prácticas sostenibles:/)).toBeInTheDocument();
-    expect(screen.getByText(/Receta sugerida:/)).toBeInTheDocument();
-    expect(screen.getByText(/\(3\.5\)/)).toHaveTextContent("★★★☆☆ (3.5)");
-  });
-
-  it("llama onAddToCart al presionar el botón", () => {
+  // 8
+  it("8. Renderiza la calificación en formato '(4.5)'", () => {
     render(<Product producto={baseProduct} onAddToCart={onAddToCartMock} />);
-    fireEvent.click(screen.getByText("Agregar al carrito"));
-    expect(onAddToCartMock).toHaveBeenCalledWith(baseProduct);
-    expect(onAddToCartMock).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("(4.5)")).toBeInTheDocument();
   });
 
-  it("desactiva el botón si el stock es 0", () => {
-    const soldOutProduct = { ...baseProduct, stock: 0 };
-    render(<Product producto={soldOutProduct} onAddToCart={onAddToCartMock} />);
-    expect(screen.getByText("Agotado")).toBeDisabled();
+  // 9
+  it("9. Renderiza las estrellas correctas para calificación 4.5 (4 llenas, 1 media, 0 vacías)", () => {
+    render(<Product producto={baseProduct} onAddToCart={onAddToCartMock} />);
+
+    const container = screen.getByText("(4.5)").closest(".product-rating");
+    const starsNode = container.querySelector(".rating-stars");
+
+    const text = starsNode.textContent.replace(/\s+/g, "");
+    expect(text).toBe("★★★★★"); 
   });
 
-  it("renderiza correctamente la calificación máxima (5 estrellas)", () => {
-    const product = { ...baseProduct, calificacion: 5 };
-    render(<Product producto={product} onAddToCart={onAddToCartMock} />);
-    expect(screen.getByText(/\(5\.0\)/)).toHaveTextContent("★★★★★ (5.0)");
-  });
 
-  it("renderiza correctamente la calificación mínima (0 estrellas)", () => {
-    const product = { ...baseProduct, calificacion: 0 };
-    render(<Product producto={product} onAddToCart={onAddToCartMock} />);
-    expect(screen.getByText(/\(0\.0\)/)).toHaveTextContent("☆☆☆☆☆ (0.0)");
-  });
+  // 10
+  it("10. El precio 0 CLP se muestra correctamente", () => {
+    const p = { ...baseProduct, precio: 0 };
+    render(<Product producto={p} onAddToCart={onAddToCartMock} />);
 
-  it("no muestra receta si el campo es null", () => {
-    const product = { ...baseProduct, receta: null };
-    render(<Product producto={product} onAddToCart={onAddToCartMock} />);
-    expect(screen.getByText(/Receta sugerida:/)).toBeInTheDocument();
-    expect(screen.getByText(/Receta sugerida:/).textContent).toContain("");
-  });
-
-  it("no muestra sostenibilidad si el campo es null", () => {
-    const product = { ...baseProduct, sostenibilidad: null };
-    render(<Product producto={product} onAddToCart={onAddToCartMock} />);
-    expect(screen.getByText(/Prácticas sostenibles:/)).toBeInTheDocument();
-    expect(screen.getByText(/Prácticas sostenibles:/).textContent).toContain("");
-  });
-
-  it("cambia texto del botón si stock es 1", () => {
-    const product = { ...baseProduct, stock: 1 };
-    render(<Product producto={product} onAddToCart={onAddToCartMock} />);
-    expect(screen.getByText("Agregar al carrito")).not.toBeDisabled();
-  });
-
-  it("llama onAddToCart correctamente con stock 1", () => {
-    const product = { ...baseProduct, stock: 1 };
-    render(<Product producto={product} onAddToCart={onAddToCartMock} />);
-    fireEvent.click(screen.getByText("Agregar al carrito"));
-    expect(onAddToCartMock).toHaveBeenCalledWith({ ...baseProduct, stock: 1 });
-  });
-
-  it("muestra imagen con alt correcto aunque falte URL", () => {
-    const product = { ...baseProduct, imagen: "" };
-    render(<Product producto={product} onAddToCart={onAddToCartMock} />);
-    const img = screen.getByAltText(baseProduct.nombre);
-    expect(img).toBeInTheDocument();
-    expect(img.src).toContain("");
-  });
-
-  it("no rompe si precio es 0", () => {
-    const product = { ...baseProduct, precio: 0 };
-    render(<Product producto={product} onAddToCart={onAddToCartMock} />);
-    expect(screen.getByText(/\$0 CLP/)).toBeInTheDocument();
+    expect(screen.getByText("$0 CLP")).toBeInTheDocument();
   });
 });

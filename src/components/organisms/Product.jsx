@@ -1,39 +1,65 @@
 import React from "react";
 
-export default function Product({ producto, onAddToCart }) {
+export default function Product({ producto, onAddToCart, isMaxedOut = false }) {
   const { nombre, imagen, descripcion, precio, stock, origen, sostenibilidad, receta, calificacion } = producto;
-  const renderStars = () => {
-    const fullStars = Math.floor(calificacion);
-    const halfStar = calificacion % 1 >= 0.5;
-    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
 
-   return (
-      <>
-        {"★".repeat(fullStars)}
-        {halfStar && "☆"} 
-        {"☆".repeat(emptyStars)}
-      </>
+  const disabled = stock === 0 || isMaxedOut;
+
+  const renderStars = () => {
+    const full = Math.floor(calificacion);
+    const half = calificacion % 1 >= 0.5 ? 1 : 0;
+    const empty = 5 - full - half;
+
+    return (
+      <span className="rating-stars">
+        {"★".repeat(full)}
+        {half === 1 && <span className="half-star">★</span>}
+        {"☆".repeat(empty)}
+      </span>
     );
-  }
+  };
+
   return (
-    <div className="product-card">
-      <img src={imagen} alt={nombre} />
-      <h3>{nombre}</h3>
-      <p>{descripcion}</p>
-      <p><strong>Precio:</strong> ${precio.toLocaleString()} CLP</p>
-      <p><strong>Stock:</strong> {stock}</p>
-      <p><strong>Origen:</strong> {origen}</p>
-      <p><strong>Prácticas sostenibles:</strong> {sostenibilidad}</p>
-      <p><strong>Receta sugerida:</strong> {receta}</p>
-      <p className="product-rating">{renderStars()} ({calificacion.toFixed(1)})</p>
-      <button 
-        onClick={() => onAddToCart(producto)} 
-        disabled={stock === 0}
-        className={stock === 0 ? "disabled" : ""}
+    <div className="product-card horizontal-card">
+
+      {/* 🟢 Botón/etiqueta grande al estilo "burbuja" */}
+      <div
+        className="big-cart-tag"
+        onClick={() => !disabled && onAddToCart(producto)}
+        style={{ cursor: disabled ? "not-allowed" : "pointer" }}
       >
-        {stock === 0 ? "Agotado" : "Agregar al carrito"}
-      </button>
+        {stock === 0 ? "AGOTADO" : isMaxedOut ? "LÍMITE" : "AÑADE AL CARRITO"}
+      </div>
+
+      {/* Contenedor general horizontal */}
+      <div className="product-row">
+
+        {/* IMAGEN */}
+        <div className="product-image-side">
+          <img src={imagen} alt={nombre} />
+        </div>
+
+        {/* TEXTO */}
+        <div className="product-info-side">
+          <div className="product-price">${precio.toLocaleString()} CLP</div>
+
+          <h3>{nombre}</h3>
+
+          <p className="product-description">{descripcion}</p>
+
+          <p className="meta">STOCK: <strong>{stock}</strong></p>
+          <p className="meta">ORIGEN: <strong>{origen}</strong></p>
+
+          <p className="meta">{sostenibilidad}</p>
+          <p className="meta">Receta sugerida: {receta}</p>
+
+          {/* Rating */}
+          <p className="product-rating">
+            ({calificacion.toFixed(1)}) {renderStars()}
+          </p>
+        </div>
+
+      </div>
     </div>
   );
 }
-

@@ -1,58 +1,94 @@
 import React from "react";
 
-export default function Boleta({ cliente, carrito, fecha, numeroBoleta, metodoPago, onClose }) {
-  const total = carrito.reduce(
-    (sum, producto) => sum + producto.precio * producto.cantidad,
-    0
-  );
+export default function Boleta({
+  cliente,
+  carrito,
+  fecha,
+  numeroBoleta,
+  metodoPago,
+  onClose,
+  total,
+  subTotal,
+  costoEnvio,
+}) {
+  const formatCLP = (n) => n.toLocaleString("es-CL");
 
   return (
-    <div className="boleta-overlay">
-      <div className="boleta-container">
-        {/* Header */}
-        <header className="boleta-header">
-          <h2>🧾 BOLETA DE COMPRA – HuertoHogar</h2>
-        </header>
-
-        {/* Información del cliente y boleta */}
-        <div className="boleta-info">
-          <p>📅 Fecha: {fecha}</p>
-          <p>🧍 Cliente: {cliente.nombre} {cliente.apellido}</p>
-          <p>🛒 N° de boleta: #{numeroBoleta}</p>
+    <div className="boleta-documento">
+      <div className="boleta-header">
+        <div>
+          <h2>Huerto Hogar</h2>
+          <h3>Boleta Electrónica</h3>
         </div>
 
-        <table className="boleta-table">
+        <div className="boleta-info">
+          <p>
+            <strong>N° Boleta:</strong> {numeroBoleta}
+          </p>
+          <p>
+            <strong>Fecha:</strong> {fecha}
+          </p>
+          <p>
+            <strong>Método de Pago:</strong> {metodoPago}
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <h4>Datos de Cliente y Envío</h4>
+        <div className="cliente-info">
+          <p>
+            <strong>Cliente:</strong> {cliente?.nombre} {cliente?.apellido}
+          </p>
+          <p>
+            <strong>Correo:</strong> {cliente?.correo}
+          </p>
+          <p>
+            <strong>Dirección:</strong> {cliente?.direccion}, {cliente?.comuna},{" "}
+            {cliente?.region}
+          </p>
+        </div>
+      </div>
+
+      <div className="detalle-productos">
+        <h4>Detalle de Productos</h4>
+        <table>
           <thead>
             <tr>
               <th>Producto</th>
-              <th>Cantidad</th>
-              <th>Precio Unitario</th>
+              <th>Cant.</th>
+              <th>Unitario</th>
               <th>Subtotal</th>
             </tr>
           </thead>
           <tbody>
-            {carrito.map((producto) => (
-              <tr key={producto.id}>
-                <td>{producto.nombre}</td>
-                <td>{producto.cantidad}</td>
-                <td>${producto.precio.toLocaleString()}</td>
-                <td>${(producto.precio * producto.cantidad).toLocaleString()}</td>
+            {carrito?.map((item) => (
+              <tr key={item.id}>
+                <td>{item.nombre}</td>
+                <td>{item.cantidad}</td>
+                <td>${formatCLP(item.precio)}</td>
+                <td>${formatCLP(item.precio * item.cantidad)}</td>
               </tr>
             ))}
           </tbody>
         </table>
+      </div>
 
-        <div className="boleta-total">
-          <h3>💰 Total a pagar: ${total.toLocaleString()}</h3>
-          <p>Método de pago: {metodoPago}</p>
-        </div>
+      <div className="boleta-totales">
+        <p>
+          <span>Subtotal Productos:</span> <span>${formatCLP(subTotal)}</span>
+        </p>
+        <p>
+          <span>Costo de Envío:</span> <span>${formatCLP(costoEnvio)}</span>
+        </p>
+        <p>
+          <span>TOTAL PAGADO:</span> <span>${formatCLP(total)}</span>
+        </p>
+      </div>
 
-    
-        <p className="boleta-footer">Gracias por tu compra en HuertoHogar 🌱</p>
-
-        <button className="boleta-close" onClick={onClose}>
-          Cerrar
-        </button>
+      <div className="boleta-footer">
+        <p>¡Gracias por tu compra en Huerto Hogar!</p>
+        <button onClick={onClose}>Cerrar</button>
       </div>
     </div>
   );
