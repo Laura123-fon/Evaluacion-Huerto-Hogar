@@ -10,6 +10,7 @@ import lombok.*;
 @Builder
 @Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -19,4 +20,8 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private String role; // "ADMIN" o "USER"
+
 }
