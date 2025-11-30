@@ -12,7 +12,9 @@ export default function Carrito() {
 
   const navigate = useNavigate();
 
-  // Estado del cliente
+  /** =====================================================
+   *  ESTADO DE CLIENTE (CARGA DEL FORM + DATOS DE USUARIO)
+   *  ===================================================== */
   const [cliente, setCliente] = useState(() => {
     const savedData = localStorage.getItem(FORM_STORAGE_KEY);
     const initialForm = savedData ? JSON.parse(savedData) : {};
@@ -24,7 +26,6 @@ export default function Carrito() {
     };
 
     return {
-      ...initialForm,
       ...datosUsuario,
       direccion: initialForm.direccion || "",
       departamento: initialForm.departamento || "",
@@ -34,89 +35,140 @@ export default function Carrito() {
     };
   });
 
-  // Guardar en localStorage
+  /** =====================================================
+   *  GUARDAR FORMULARIO EN LOCALSTORAGE AUTOMÁTICAMENTE
+   *  ===================================================== */
   useEffect(() => {
-    const { nombre, apellido, correo, ...rest } = cliente;
-    localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(rest));
+    const { nombre, apellido, correo, ...soloDireccion } = cliente;
+    localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(soloDireccion));
   }, [cliente]);
 
-  // Cantidad
-  const aumentarCantidad = (id, cantidad) => actualizarCantidad(id, cantidad + 1);
-  const disminuirCantidad = (id, cantidad) =>
-    cantidad > 1 && actualizarCantidad(id, cantidad - 1);
+  /** =====================================================
+   *  MANEJO DE CANTIDADES
+   *  ===================================================== */
+  const aumentarCantidad = (id, cantidad) => {
+    const producto = carrito.find((p) => p.id === id);
+    if (!producto) return;
+
+    // Control básico de stock (si implementas stock real)
+    if (producto.stock && cantidad >= producto.stock) return;
+
+    actualizarCantidad(id, cantidad + 1);
+  };
+
+  const disminuirCantidad = (id, cantidad) => {
+    if (cantidad > 1) actualizarCantidad(id, cantidad - 1);
+  };
+
   const cambiarCantidadManual = (id, valor) => {
     let cantidad = parseInt(valor, 10);
-    if (isNaN(cantidad) || cantidad < 1) cantidad = 1;
+
+    if (!cantidad || cantidad < 1) cantidad = 1;
     if (cantidad > 100) cantidad = 100;
+
     actualizarCantidad(id, cantidad);
   };
 
-  // Eliminar producto
   const eliminarProducto = (id) => eliminarDelCarrito(id);
 
-  // Totales
-  const subTotal = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+  /** =====================================================
+   *  TOTALES
+   *  ===================================================== */
+  const subTotal = carrito.reduce(
+    (acc, item) => acc + item.precio * item.cantidad,
+    0
+  );
   const costoEnvio = 3000;
   const iva = Math.round(subTotal * 0.19);
   const total = subTotal + costoEnvio + iva;
 
   const formatCLP = (n) => n.toLocaleString("es-CL");
 
-  // Cambios en formulario
-  const handleChange = (e) => setCliente({ ...cliente, [e.target.name]: e.target.value });
-
-  // Finalizar compra
-const handleCompra = (e) => {
-  e.preventDefault();
-
-  if (carrito.length === 0) {
-    alert("Tu carrito está vacío 😢");
-    return;
-  }
-
-  const requeridos = ["nombre", "apellido", "correo", "direccion", "region", "comuna"];
-  const faltantes = requeridos.some((campo) => cliente[campo].trim() === "");
-
-  if (faltantes) {
-    alert("Por favor completa todos los datos del cliente y de entrega.");
-    return;
-  }
-
-  // Generar número
-  const numero = generarNumeroBoleta();
-
-  // Crear boleta
-  const nuevaBoleta = {
-    numero,
-    fecha: new Date().toLocaleString(),
-    cliente,          // ✔ AHORA SÍ
-    productos: carrito,
-    subTotal,
-    costoEnvio,
-    iva,
-    total,
+  /** =====================================================
+   *  MANEJO FORMULARIO
+   *  ===================================================== */
+  const handleChange = (e) => {
+    setCliente({ ...cliente, [e.target.name]: e.target.value });
   };
 
-  agregarBoleta(nuevaBoleta);
+  /** =====================================================
+   *  FINALIZAR COMPRA
+   *  ===================================================== */
+  const handleCompra = (e) => {
+    e.preventDefault();
 
-  // Navegar a boleta individual
-  navigate("/boleta", {
-    state: { boleta: nuevaBoleta }
-  });
-};
+    if (carrito.length === 0) {
+      alert("Tu carrito está vacío 😢");
+      return;
+    }
 
+    const requeridos = [
+      "nombre",
+      "apellido",
+      "correo",
+      "direccion",
+      "region",
+      "comuna",
+    ];
 
+    const faltantes = requeridos.some(
+      (campo) => cliente[campo].trim() === ""
+    );
 
+    if (faltantes) {
+      alert("Por favor completa todos los datos del cliente y de entrega.");
+      return;
+    }
+
+    const numero = generarNumeroBoleta();
+
+    const nuevaBoleta = {
+      numero,
+      fecha: new Date().toLocaleString(),
+      cliente,
+      productos: carrito,
+      subTotal,
+      costoEnvio,
+      iva,
+      total,
+    };
+
+    agregarBoleta(nuevaBoleta);
+
+    // Limpieza tras generar boleta
+    limpiarCarrito();
+    localStorage.removeItem(FORM_STORAGE_KEY);
+
+    setCliente({
+      nombre: cliente.nombre,
+      apellido: cliente.apellido,
+      correo: cliente.correo,
+      direccion: "",
+      departamento: "",
+      region: "",
+      comuna: "",
+      indicaciones: "",
+    });
+
+    navigate("/boleta", {
+      state: { boleta: nuevaBoleta },
+    });
+  };
+
+  /** =====================================================
+   *  RENDERIZADO
+   *  ===================================================== */
   return (
     <div className="carrito-container">
       <h2 className="titulo-carrito">Carrito Huerto Hogar</h2>
+
       <button
-      type="button"
-      className="btn-volver-catalogo"
-      onClick={() => navigate("/catalog")}
-    >
-      ← Volver al catálogo
-    </button>
+        type="button"
+        className="btn-volver-catalogo"
+        onClick={() => navigate("/catalog")}
+      >
+        ← Volver al catálogo
+      </button>
 
       {carrito.length === 0 ? (
         <p className="carrito-vacio">
@@ -124,6 +176,7 @@ const handleCompra = (e) => {
         </p>
       ) : (
         <form className="carrito-wrapper" onSubmit={handleCompra}>
+          {/* ===================== TABLA DEL CARRITO ===================== */}
           <div className="cart-content-left">
             <table className="tabla-carrito">
               <thead>
@@ -148,20 +201,29 @@ const handleCompra = (e) => {
                         ✕
                       </button>
 
-                      <img src={p.imagen} alt={p.nombre} className="carrito-img" />
+                      <img
+                        src={p.imagen}
+                        alt={p.nombre}
+                        className="carrito-img"
+                      />
 
                       <div className="producto-detalles">
                         <span className="producto-nombre">{p.nombre}</span>
-                        <span className="producto-atributos">Origen: Chile</span>
+                        <span className="producto-atributos">
+                          Origen: Chile
+                        </span>
                       </div>
                     </td>
 
-                    <td className="precio-cell" data-label="Precio Unitario:">
+                    <td className="precio-cell">
                       ${formatCLP(p.precio)}
                     </td>
 
-                    <td className="cantidad-cell" data-label="Cantidad:">
-                      <button type="button" onClick={() => disminuirCantidad(p.id, p.cantidad)}>
+                    <td className="cantidad-cell">
+                      <button
+                        type="button"
+                        onClick={() => disminuirCantidad(p.id, p.cantidad)}
+                      >
                         -
                       </button>
 
@@ -169,15 +231,20 @@ const handleCompra = (e) => {
                         className="input-cantidad"
                         type="text"
                         value={p.cantidad}
-                        onChange={(e) => cambiarCantidadManual(p.id, e.target.value)}
+                        onChange={(e) =>
+                          cambiarCantidadManual(p.id, e.target.value)
+                        }
                       />
 
-                      <button type="button" onClick={() => aumentarCantidad(p.id, p.cantidad)}>
+                      <button
+                        type="button"
+                        onClick={() => aumentarCantidad(p.id, p.cantidad)}
+                      >
                         +
                       </button>
                     </td>
 
-                    <td className="subtotal-cell" data-label="Subtotal:">
+                    <td className="subtotal-cell">
                       ${formatCLP(p.precio * p.cantidad)}
                     </td>
                   </tr>
@@ -186,30 +253,34 @@ const handleCompra = (e) => {
             </table>
 
             <div style={{ marginTop: "1rem" }}>
-              <button type="button" className="clear-cart-link" onClick={limpiarCarrito}>
+              <button
+                type="button"
+                className="clear-cart-link"
+                onClick={limpiarCarrito}
+              >
                 Limpiar carrito
               </button>
             </div>
           </div>
 
-          {/* ===========================================
-              COLUMNA DERECHA – ORDEN DE ENVÍO
-          =========================================== */}
+          {/* ===================== RESUMEN + DIRECCIÓN ===================== */}
           <div className="order-summary">
             <h3>Orden de Envío</h3>
 
             <div className="summary-details">
               <div>
                 <span>Nombre</span>
-                <span>{cliente.nombre} {cliente.apellido}</span>
+                <span>
+                  {cliente.nombre} {cliente.apellido}
+                </span>
               </div>
 
               <div>
                 <span>Correo</span>
                 <span>{cliente.correo}</span>
               </div>
-                
-                <div>
+
+              <div>
                 <span>Subtotal</span>
                 <span>${formatCLP(subTotal)}</span>
               </div>
@@ -230,9 +301,6 @@ const handleCompra = (e) => {
               </div>
             </div>
 
-            {/* ===========================================
-                FORMULARIO DE DIRECCIÓN (TU BLOQUE NUEVO)
-            =========================================== */}
             <h3 style={{ marginTop: "1.2rem" }}>Dirección</h3>
 
             <div className="form-grid-summary">
@@ -282,9 +350,7 @@ const handleCompra = (e) => {
 
             <button type="submit" className="btn-checkout">
               Finalizar Compra y Pagar
-              
             </button>
-            
           </div>
         </form>
       )}

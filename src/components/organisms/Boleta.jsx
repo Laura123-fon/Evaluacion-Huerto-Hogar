@@ -1,20 +1,24 @@
 import React from "react";
 
 export default function Boleta({
-  cliente,
-  carrito,
-  fecha,
-  numeroBoleta,
-  metodoPago,
+  cliente = {},
+  carrito = [],
+  fecha = "",
+  numeroBoleta = "",
+  metodoPago = "Transferencia / WebPay",
   onClose,
-  total,
-  subTotal,
-  costoEnvio,
+  total = 0,
+  subTotal = 0,
+  costoEnvio = 0,
 }) {
-  const formatCLP = (n) => n.toLocaleString("es-CL");
+  const formatCLP = (n) => Number(n).toLocaleString("es-CL");
 
   return (
     <div className="boleta-documento">
+
+      {/* ===========================
+          ENCABEZADO
+      ============================ */}
       <div className="boleta-header">
         <div>
           <h2>Huerto Hogar</h2>
@@ -34,24 +38,34 @@ export default function Boleta({
         </div>
       </div>
 
+      {/* ===========================
+          DATOS CLIENTE
+      ============================ */}
       <div>
         <h4>Datos de Cliente y Envío</h4>
+
         <div className="cliente-info">
           <p>
-            <strong>Cliente:</strong> {cliente?.nombre} {cliente?.apellido}
+            <strong>Cliente:</strong> {cliente.nombre} {cliente.apellido}
           </p>
+
           <p>
-            <strong>Correo:</strong> {cliente?.correo}
+            <strong>Correo:</strong> {cliente.correo}
           </p>
+
           <p>
-            <strong>Dirección:</strong> {cliente?.direccion}, {cliente?.comuna},{" "}
-            {cliente?.region}
+            <strong>Dirección:</strong>{" "}
+            {cliente.direccion}, {cliente.comuna}, {cliente.region}
           </p>
         </div>
       </div>
 
+      {/* ===========================
+          DETALLE PRODUCTOS
+      ============================ */}
       <div className="detalle-productos">
         <h4>Detalle de Productos</h4>
+
         <table>
           <thead>
             <tr>
@@ -61,8 +75,9 @@ export default function Boleta({
               <th>Subtotal</th>
             </tr>
           </thead>
+
           <tbody>
-            {carrito?.map((item) => (
+            {carrito.map((item) => (
               <tr key={item.id}>
                 <td>{item.nombre}</td>
                 <td>{item.cantidad}</td>
@@ -74,22 +89,39 @@ export default function Boleta({
         </table>
       </div>
 
+      {/* ===========================
+          TOTALES
+      ============================ */}
       <div className="boleta-totales">
         <p>
-          <span>Subtotal Productos:</span> <span>${formatCLP(subTotal)}</span>
+          <span>Subtotal Productos:</span>
+          <span>${formatCLP(subTotal)}</span>
         </p>
+
         <p>
-          <span>Costo de Envío:</span> <span>${formatCLP(costoEnvio)}</span>
+          <span>Costo de Envío:</span>
+          <span>${formatCLP(costoEnvio)}</span>
         </p>
-        <p>
-          <span>TOTAL PAGADO:</span> <span>${formatCLP(total)}</span>
+
+        <p className="total-final">
+          <span>TOTAL PAGADO:</span>
+          <span>${formatCLP(total)}</span>
         </p>
       </div>
 
+      {/* ===========================
+          FOOTER
+      ============================ */}
       <div className="boleta-footer">
         <p>¡Gracias por tu compra en Huerto Hogar!</p>
-        <button onClick={onClose}>Cerrar</button>
+
+        {onClose && (
+          <button onClick={onClose} type="button">
+            Cerrar
+          </button>
+        )}
       </div>
+
     </div>
   );
 }

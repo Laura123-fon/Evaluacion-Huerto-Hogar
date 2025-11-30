@@ -21,7 +21,7 @@
 body {
   font-family: 'Montserrat', sans-serif;
   color: var(--gris-oscuro);
-  background-color: var(--fondo-form-suave);
+  background-color: var(--blanco-suave);
   line-height: 1.6;
   min-height: 100vh;
   display: flex;
@@ -265,37 +265,98 @@ header {
 
 
 /* ===========================================================================
-        FOODER
+        FOOTER
 =========================================================================== */
-footer {
+
+.footer {
+    background-color: #333; /* Color oscuro típico de footer */
+    color: #f0f0f0;
+    padding: 1.5rem 1rem;
     text-align: center;
-    padding: 20px 15px;
-    background: var(--gris-oscuro);
-    color: var(--blanco-suave);
-    margin-top: 3rem;
-    font-size: 0.9rem;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
     display: flex;
-    justify-content: center;
-    gap: 2rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.copyright-text {
+    font-size: 0.9rem;
+    order: 2; /* Coloca el copyright debajo de todo */
+    margin: 0;
 }
 
 .logoutBtn {
-    background: none;
-    border: 1px solid var(--marron-acento);
-    color: var(--marron-acento);
+    background: #FF6F00;
+    color: white;
     padding: 0.5rem 1rem;
+    border: none;
     border-radius: 6px;
-    font-weight: 600;
     cursor: pointer;
-    transition: var(--t); /* ✅ APLICADA */
+    font-weight: 600;
+    transition: 0.3s;
+    order: 3;
 }
 
 .logoutBtn:hover {
-    background-color: var(--marron-acento);
-    color: var(--gris-oscuro);
+    background: #e06000;
+}
+
+/* 🟢 ESTILOS PARA REDES SOCIALES (IMÁGENES) 🟢 */
+.social-links {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    order: 1; /* Coloca la sección Síguenos primero */
+}
+
+.social-links span {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+/* Contenedor del enlace (la imagen) */
+.social-links .social-icon {
+    display: block;
+    width: 40px; /* Tamaño del enlace/imagen de Facebook (ejemplo) */
+    height: 40px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 8px; 
+    overflow: hidden; /* Asegura que la imagen no se desborde al hacer hover */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.social-links .social-icon:hover {
+    transform: scale(1.1); /* Animación de zoom */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.6);
+}
+
+/* Estilo para la etiqueta IMG dentro del enlace */
+.social-links .social-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Asegura que la imagen llene el contenedor sin distorsionarse */
+    display: block;
 }
 
 
+@media (max-width: 600px) {
+    .footer-content {
+        gap: 0.8rem;
+    }
+    .social-links {
+        flex-direction: row;
+        gap: 0.7rem;
+    }
+    .social-links span {
+        font-size: 0.9rem;
+    }
+}
 
 /* ===========================================================================
         LADING PAGE
@@ -531,18 +592,23 @@ footer {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
-@media (max-width: 768px) {
-  .catalog-header {
-    flex-direction: column;
-    text-align: center;
-    padding: 1.2rem 1.4rem;
-  }
-
-  .catalog-header h1 {
-    font-size: 1.8rem;
-  }
+.back-btn-strong {
+    background: var(--blanco);
+    color: var(--verde-esmeralda);
+    padding: 0.6rem 1.3rem;
+    border-radius: 50px;
+    font-weight: 700;
+    border: 2px solid var(--blanco);
+    transition: 0.25s ease;
+    text-decoration: none;
 }
 
+.back-btn-strong:hover {
+    background: var(--amarillo-mostaza);
+    color: var(--gris-oscuro);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
 
 /* ===========================================================================
         FILTROS
@@ -583,11 +649,21 @@ footer {
     box-shadow: 0 4px 8px rgba(46, 139, 87, 0.3);
 }
 
+.add-anim {
+    transform: scale(1.08);
+    background-color: var(--verde-brillante) !important;
+    transition: 0.15s ease;
+}
 
 
 /* ===========================================================================
         LISTA DE PRODUCTOS
 =========================================================================== */
+
+.horizontal-card.agotado {
+    opacity: 0.45;
+    filter: grayscale(40%);
+}
 
 .product-list {
     display: grid;
@@ -597,18 +673,87 @@ footer {
     max-width: 100%; 
 }
 
-@media (max-width: 850px) { 
-    .product-list {
-        grid-template-columns: repeat(auto-fit, minmax(100%, 1fr)); 
-        justify-items: center; 
-    }
+.producto-agotado {
+  opacity: 0.55;
+  filter: grayscale(0.3);
+}
+
+.big-cart-tag {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.big-cart-tag:not(.disabled):hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 14px rgba(83, 255, 157, 0.55);
+  cursor: pointer;
+  animation: hoverPulse 0.4s ease-in-out;
+}
+
+@keyframes hoverPulse {
+  0% {
+    transform: scale(1.00);
+  }
+  50% {
+    transform: scale(1.10);
+  }
+  100% {
+    transform: scale(1.08);
+  }
+}
+
+@media (max-width: 992px) {
+  .big-cart-tag {
+    padding: 0.5rem 0.5rem !important;
+    font-size: 0.9rem !important;
+    top: -10px;
+    left: 10px;
+  }
+
+  .product-price {
+    font-size: 1.05rem;
+  }
+
+  .product-image-side img {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+@media (max-width: 600px) {
+  .product-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .big-cart-tag {
+    position: relative; 
+    top: 0;
+    left: 0;
+    margin-bottom: 0.8rem;
+    max-width: 220px;
+    font-size: 0.85rem !important;
+    padding: 0.6rem 1.1rem !important;
+    clip-path: none; 
+    border-radius: 12px;
+  }
+
+  .product-price {
+    order: 2;
+  }
+}
+
+@media (max-width: 420px) {
+  .big-cart-tag {
+    max-width: 180px;
+    font-size: 0.75rem !important;
+    padding: 0.5rem 0.9rem !important;
+  }
 }
 
 
 /* ===========================================================================
     TARJETAS DEL CATALOGO
 =========================================================================== */
-
 
 .horizontal-card {
     position: relative;
@@ -687,7 +832,6 @@ footer {
         MENSAJES DEL CATALOGO
 =========================================================================== */
 
-
 #toast-container {
   position: fixed;
   top: 20px;
@@ -722,6 +866,104 @@ footer {
 }
 
 
+/* ===========================================================
+   RESPONSIVE CATALOGO — HEADER FULL WIDTH + TARJETAS MÁS PEQUEÑAS
+=========================================================== */
+
+@media (max-width: 992px) {
+
+  /* El header se expande a todo el ancho */
+  .catalog-page {
+    padding: 0;
+    max-width: 100%;
+  }
+
+  .catalog-header {
+    border-radius: 0;   /* se vuelve recto tipo banner */
+    width: 100%;
+    padding: 1.5rem 1rem;
+  }
+
+  .product-list {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.2rem;
+    padding: 1.5rem;
+  }
+
+  .product-image-side img {
+    width: 140px;
+    height: 140px;
+  }
+
+  .horizontal-card {
+    padding: 1.2rem;
+  }
+
+  .product-row {
+    gap: 1.2rem;
+  }
+
+  .product-info-side h3 {
+    font-size: 1.2rem;
+  }
+
+  .product-info-side .product-price {
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Header tipo bloque centrado */
+  .catalog-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.8rem;
+    padding: 1.3rem 1rem;
+  }
+
+  .catalog-header h1 {
+    font-size: 1.6rem;
+  }
+
+ 
+  .product-row {
+    flex-direction: column;
+  }
+
+  .product-image-side img {
+    width: 200px;
+    height: 200px;
+  }
+
+  .horizontal-card {
+    border-radius: 20px;
+    padding: 1rem;
+  }
+
+  .product-info-side h3 {
+    font-size: 1.1rem;
+    margin-top: 0.6rem;
+  }
+
+  .product-info-side p {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .product-list {
+    grid-template-columns: 1fr;
+  }
+
+  .product-image-side img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .product-info-side h3 {
+    font-size: 1rem;
+  }
+}
 
 /* ===========================================================================
         CARRITO
@@ -766,7 +1008,6 @@ footer {
     min-width: 0;
 }
 
-/* Tabla */
 .tabla-carrito {
     width: 100%;
     border-collapse: collapse;
@@ -788,7 +1029,7 @@ footer {
 .tabla-carrito thead th:first-child { border-top-left-radius: 12px; }
 .tabla-carrito thead th:last-child { border-top-right-radius: 12px; }
 
-/* Filas */
+
 .tabla-carrito tbody tr {
     transition: background 0.2s;
     border-bottom: 1px solid var(--borde-separador);
@@ -808,7 +1049,6 @@ footer {
     vertical-align: middle;
 }
 
-/* Producto */
 .producto-info-cell {
     display: flex;
     align-items: center;
@@ -844,7 +1084,6 @@ footer {
     margin-top: 0.2rem;
 }
 
-/* Cantidad */
 .cantidad-cell {
   display: flex;
   align-items: center;
@@ -906,7 +1145,6 @@ footer {
   transform: scale(0.9);
 }
 
-/* Precios */
 .precio-cell,
 .subtotal-cell {
     font-weight: 800;
@@ -938,7 +1176,6 @@ footer {
   transform: translateX(-3px);
 }
 
-/* Eliminar */
 .btn-eliminar-producto {
     position: absolute;
     top: 50%;
@@ -1048,7 +1285,6 @@ footer {
     background: #27794b; 
 }
 
-/* === FORMULARIO DE DIRECCIÓN EN RESUMEN === */
 .form-grid-summary {
   display: grid;
   grid-template-columns: 1fr 3fr;
@@ -1061,124 +1297,193 @@ footer {
   font-size: 0.9rem;
 }
 
+@media (max-width: 1200px) {
+  .precio-cell,
+  .subtotal-cell {
+    font-size: 1.6rem;
+  }
 
+  .carrito-img {
+    width: 70px !important;
+    height: 70px !important;
+  }
+
+  .producto-nombre {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 1060px) {
+
+  .carrito-container {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .carrito-wrapper {
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    gap: 2rem;
+    padding: 0 1rem;
+    box-sizing: border-box;
+  }
+
+  .tabla-carrito {
+    width: 100% !important;
+  }
+
+  .order-summary {
+    width: 100%;
+    max-width: 100%;
+    position: static !important;
+  }
+
+  .producto-detalles {
+    max-width: 100%;
+  }
+
+  .carrito-img {
+    width: 60px !important;
+    height: 60px !important;
+  }
+}
 
 @media (max-width: 900px) {
-    .carrito-wrapper {
-        flex-direction: column;
-    }
-    .order-summary {
-        max-width: 100%;
-        position: static;
-    }
+
+  .tabla-carrito {
+    width: 100% !important;
+    table-layout: fixed;
+  }
+
+  .tabla-carrito td {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .producto-info-cell {
+    gap: 0.6rem;
+    max-width: 100%;
+  }
+
+  .producto-detalles {
+    max-width: 150px;
+  }
+
+  .precio-cell,
+  .subtotal-cell {
+    font-size: 1.2rem;
+    white-space: nowrap;
+  }
 }
 
 @media (max-width: 600px) {
-    .tabla-carrito {
-        border-radius: var(--radius-base);
-    }
-    .tabla-carrito thead {
-        display: none;
-    }
 
-    .tabla-carrito tbody tr {
-        margin-bottom: 1rem;
-        border: 1px solid var(--borde-separador);
-        border-radius: 8px;
-        display: block;
-        padding: 1rem;
-    }
+  .order-summary {
+    margin-top: 1rem;
+  }
+  
+  .carrito-container,
+  .carrito-wrapper {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    padding: 0;
+  }
 
-    .tabla-carrito td {
-        display: flex;
-        justify-content: space-between;
-        padding: 0.5rem 0;
-        border-bottom: 1px dashed var(--borde-separador);
-    }
-    .tabla-carrito td:last-child {
-        border-bottom: none;
-    }
-    .tabla-carrito td::before {
-        content: attr(data-label); 
-        font-weight: 600;
-        color: var(--gris-medio);
-        min-width: 90px;
-    }
-    
-    .producto-info-cell {
-        padding-left: 0;
-        border-bottom: 1px dashed var(--borde-separador);
-        padding-bottom: 1rem;
-    }
-    .producto-info-cell::before {
-        content: "Producto";
-        display: block;
-        width: 100%;
-        font-weight: 600;
-        color: var(--gris-medio);
-        margin-bottom: 0.5rem;
-    }
-    .producto-info-cell img {
-        width: 60px !important;
-        height: 60px !important;
-    }
-    .producto-info-cell .producto-detalles {
-        flex-grow: 1;
-    }
+  .tabla-carrito {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    border-collapse: collapse;
+    height: 50vh;          /* mitad del alto de pantalla */
+    overflow-y: auto;      /* scroll interno si hay muchos productos */
+    padding-bottom: 1rem;
+    display: block;
+    padding: 0;
+    margin: 0;
+  }
 
+  /* Se oculta encabezado */
+  .tabla-carrito thead {
+    display: none;
+  }
 
-    .precio-cell { order: 1; }
-    .cantidad-cell { order: 2; border-bottom: none; }
-    .subtotal-cell { 
-        order: 3; 
-        font-size: 1.1rem;
-        padding-top: 1rem;
-        border-top: 1px solid var(--borde-separador);
-        font-weight: 800;
-    }
-    .cantidad-cell {
-        justify-content: flex-end;
-    }
-    .cantidad-cell::before {
-        content: "Cantidad";
-        font-weight: 600;
-        color: var(--gris-medio);
-        min-width: 90px;
-    }
-    .precio-cell::before {
-        content: "Precio Unitario";
-    }
-    .subtotal-cell::before {
-        content: "Subtotal";
-    }
+  /* Cada producto es una tarjeta */
+  .tabla-carrito tbody tr {
+    display: flex;
+    flex-direction: column;
+    background: var(--blanco);
+    border-radius: 14px;
+    border: 1px solid var(--borde-separador);
+    padding: 1rem;
+    margin: 0.5rem 1rem;
+    gap: 0.7rem;
+    box-sizing: border-box;
+  }
 
-    .btn-eliminar-producto {
-        opacity: 1;
-        visibility: visible;
-        position: static;
-        transform: none;
-        width: 30px;
-        height: 30px;
-        border: none;
-        background: transparent;
-        color: var(--error-rojo);
-        box-shadow: none;
-        font-size: 1.5rem;
-        align-self: flex-end;
-    }
-    .tabla-carrito tbody tr {
-        position: relative;
-    }
-    .btn-eliminar-producto {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        z-index: 20;
-    }
-    .producto-info-cell {
-        padding-right: 40px; 
-    }
+  .carrito-img {
+    width: 85px !important;
+    height: 85px !important;
+    margin: 0 auto;
+    border-radius: 10px;
+  }
+
+  .producto-info-cell,
+  .producto-detalles {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 0.3rem;
+  }
+
+  .producto-nombre {
+    text-align: center;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .precio-cell,
+  .subtotal-cell {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .cantidad-cell {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    width: 100%;
+  }
+
+  .cantidad-cell button {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+  }
+
+  .input-cantidad {
+    width: 40px;
+    height: 32px;
+    font-size: 0.95rem;
+  }
+
+  /* El formulario también ocupa todo el ancho */
+  .order-summary {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    border-radius: 0;
+    padding: 1.5rem;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+  .form-grid-summary {
+    grid-template-columns: 1fr;
+  }
+
 }
+
+
 
 
 /* ===========================================================================
@@ -1582,116 +1887,249 @@ footer {
   }
 }
 
-/* =========================================================
-   PERFIL DE USUARIO — ESTILO ELEGANTE / MONONO
-========================================================= */
-
-.perfil-container {
-  max-width: 500px;
-  margin: 4rem auto;
-  padding: 2.5rem;
-  background: var(--blanco);
-  border-radius: 20px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.12);
-  text-align: center;
-  animation: popFade 0.5s ease forwards;
-  border: 1px solid var(--borde-separador);
-}
-
-.perfil-title {
-  font-size: 2.3rem;
-  font-family: "Playfair Display", serif;
-  color: var(--marron-claro);
-  margin-bottom: 1.8rem;
-  font-weight: 700;
-}
-
-.perfil-card {
-  background: var(--fondo-form-suave);
-  padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-  border: 1px solid var(--borde-separador);
-  animation: fadeInUp 0.5s ease forwards;
-}
-
-.perfil-info {
+/* ===========================================================
+   PERFIL DE USUARIO — ESTILO ELEGANTE HUERTOHOGAR
+=========================================================== */
+.perfil-card-layout {
   display: flex;
-  flex-direction: column;
-  gap: 1.4rem;
-  margin-bottom: 2rem;
+  margin: 3rem auto;
+  max-width: 950px;
+  transform: translateX(-50px);
+  animation: fadeSlide 0.6s ease;
 }
 
-.perfil-info label {
-  font-weight: 700;
-  color: var(--marron-claro);
-  font-size: 1rem;
-  text-align: left;
+@keyframes fadeSlide {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
-.perfil-info p {
-  font-size: 1.05rem;
+.perfil-left-column {
+  flex: 0 0 35%;
+  padding: 2.5rem 1.5rem;
   background: var(--blanco);
-  padding: 0.9rem 1.2rem;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+  text-align: center;
+  border-right: 1px solid #eee;
+}
+
+.perfil-foto-container {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 1.5rem;
+  border-radius: 50%;
+  background: var(--blanco);
+  padding: 6px;
+  border: 3px solid var(--verde-esmeralda);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.20);
+  transition: var(--transition);
+}
+
+.perfil-foto-container:hover {
+  transform: scale(1.03);
+}
+
+.perfil-foto-circular {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.perfil-nombre-pequeno {
+  font-weight: 600;
+  font-size: 2rem;
   color: var(--gris-oscuro);
 }
 
-.perfil-actions {
+.perfil-nombre-pequeno small {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.9rem;
+  color: var(--gris-medio);
+}
+
+.divider-line {
+  width: 70%;
+  margin: 1.4rem auto;
+  border: none;
+  height: 1px;
+  background: #ddd;
+}
+
+.perfil-contacto p {
   display: flex;
-  justify-content: center;
-  gap: 1rem;
+  align-items: center;
+  gap: 10px;
+  color: var(--gris-oscuro);
+  margin: 0.7rem 0;
 }
 
-.btn-volver {
+.perfil-contacto span {
+  font-size: 1rem;
+  color: var(--verde-esmeralda);
+}
+
+.perfil-right-column {
+  flex: 0 0 65%;
+  padding: 2rem 2.5rem;
+  background: linear-gradient(135deg, var(--blanco) 0%, #f9f7f3 100%);
+}
+
+.perfil-right-column h2 {
+  font-size: 0.9rem;
+  color: var(--verde-esmeralda);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.perfil-nombre-titulo {
+  font-size: 2.8rem;
+  font-weight: 800;
+  margin: 0;
+  color: var(--gris-oscuro);
+}
+
+.perfil-rol-descripcion {
+  margin-top: 0.4rem;
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: var(--gris-medio);
+}
+
+.perfil-info button {
+  border-radius: 30px;
   background: var(--verde-esmeralda);
-  color: white;
-  padding: 0.9rem 2rem;
+  color: var(--blanco);
   border: none;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: var(--transition);
+  margin-top: 1.8rem;
+}
+
+.perfil-info button:hover {
+  transform: translateY(-2px);
+  background: var(--verde-brillante);
+}
+
+
+.perfil-form {
+  transform: translateX(-90px);
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1rem 1.7rem;
+}
+
+.perfil-form label {
+  font-weight: 700;
+  color: var(--gris-oscuro);
+  text-align: right;
+}
+
+.perfil-form input {
+  padding: 12px 12px;
+  border-radius: 12px;
+}
+
+.perfil-form button {
+  grid-column: 2 / 3;
+  padding: 12px 20px;
   border-radius: 12px;
   font-weight: 700;
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: 0 4px 15px rgba(46,139,87,0.2);
-}
-
-.btn-volver:hover {
-  background: var(--marron-acento);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-}
-
-.btn-logout-profile {
-  background: var(--marron-claro);
-  color: white;
-  padding: 0.9rem 2rem;
   border: none;
-  border-radius: 12px;
-  font-weight: 700;
   cursor: pointer;
-  transition: var(--transition);
-  box-shadow: 0 4px 15px rgba(139,69,19,0.2);
+  margin-top: 0.4rem;
 }
 
-.btn-logout-profile:hover {
-  background: #A0522D;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(139,69,19,0.3);
+.perfil-form button:nth-of-type(1) {
+  background: var(--verde-esmeralda);
+  color: var(--blanco);
 }
 
-/* =========================================================
-   ANIMACIONES
-========================================================= */
+.perfil-form button:nth-of-type(1):hover {
+  background: var(--verde-brillante);
+}
 
-@keyframes fadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(15px);
+.perfil-form button:nth-of-type(2) {
+  background: #777;
+  color: var(--blanco);
+}
+
+.perfil-form button:nth-of-type(2):hover {
+  background: #555;
+}
+
+.success-message {
+  margin-top: 1rem;
+  background: #d4edda;
+  padding: 0.9rem;
+  color: var(--verde-esmeralda);
+  border-radius: 8px;
+  border: 1px solid var(--verde-esmeralda);
+  text-align: center;
+  font-weight: 600;
+}
+/* ===========================================================
+   RESPONSIVIDAD MEJORADA
+=========================================================== */
+@media (max-width: 900px) {
+  .perfil-card-layout {
+    transform: none !important;
+    width: 95%;
+    margin: 2rem auto;
   }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
+
+  .perfil-form {
+    transform: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .perfil-card-layout {
+    flex-direction: column;
+    transform: none !important;
+    margin: 2rem auto;
+    width: 95%;
+  }
+
+  .perfil-left-column {
+    border-right: none;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 2rem;
+  }
+
+  .perfil-right-column {
+    text-align: center;
+    padding: 2rem 1.5rem;
+  }
+
+  .perfil-form {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .perfil-form label {
+    text-align: left;
+    padding-left: 5px;
+  }
+
+  .perfil-form button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .perfil-nombre-titulo {
+    font-size: 2.2rem;
+  }
+
+  .perfil-foto-container {
+    width: 150px;
+    height: 150px;
   }
 }

@@ -4,84 +4,155 @@ export default function Perfil() {
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [correo, setCorreo] = useState("");
+  const [foto, setFoto] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [ciudad, setCiudad] = useState("");
+  const [direccion, setDireccion] = useState("");
+
+
   const [editando, setEditando] = useState(false);
   const [mensaje, setMensaje] = useState("");
 
-  useEffect(() => {
-    const n = localStorage.getItem("nombre") || "";
-    const a = localStorage.getItem("apellido") || "";
-    const c = localStorage.getItem("usuario") || "";
+  const [original, setOriginal] = useState({});
 
-    setNombre(n);
-    setApellido(a);
-    setCorreo(c);
+  useEffect(() => {
+    const datos = {
+      nombre: localStorage.getItem("nombre") || "",
+      apellido: localStorage.getItem("apellido") || "",
+      correo: localStorage.getItem("usuario") || "",
+      foto: localStorage.getItem("fotoPerfil") || "",
+      telefono: localStorage.getItem("telefono") || "",
+      ciudad: localStorage.getItem("ciudad") || "",
+      direccion: localStorage.getItem("direccion") || "",
+    };
+
+    setNombre(datos.nombre);
+    setApellido(datos.apellido);
+    setCorreo(datos.correo);
+    setFoto(datos.foto);
+    setTelefono(datos.telefono);
+    setCiudad(datos.ciudad);
+    setDireccion(datos.direccion);
+
+    setOriginal(datos); 
   }, []);
 
   const guardarCambios = () => {
     localStorage.setItem("nombre", nombre);
     localStorage.setItem("apellido", apellido);
-    localStorage.setItem("usuario", correo);
+    localStorage.setItem("fotoPerfil", foto);
+    localStorage.setItem("telefono", telefono);
+    localStorage.setItem("ciudad", ciudad);
+    localStorage.setItem("direccion", direccion);
+
+    setOriginal({
+      nombre,
+      apellido,
+      foto,
+      telefono,
+      ciudad,
+      direccion,
+    });
 
     setMensaje("Datos actualizados correctamente ✔️");
     setEditando(false);
-
     setTimeout(() => setMensaje(""), 1800);
   };
 
+  const cancelarEdicion = () => {
+    setNombre(original.nombre);
+    setApellido(original.apellido);
+    setFoto(original.foto);
+    setTelefono(original.telefono);
+    setCiudad(original.ciudad);
+    setDireccion(original.direccion);
+    setEditando(false);
+  };
+
+  const handleImgChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setFoto(reader.result);
+    reader.readAsDataURL(file);
+  };
+
   return (
-    <div className="container" style={{ maxWidth: "520px" }}>
-      <h2>Mi Perfil</h2>
+    <div className="perfil-card-layout">
 
-      {/* Vista no editable */}
-      {!editando && (
-        <div className="perfil-info">
-          <p><strong>Nombre:</strong> {nombre}</p>
-          <p><strong>Apellido:</strong> {apellido}</p>
-          <p><strong>Correo:</strong> {correo}</p>
-
-          <button onClick={() => setEditando(true)}>
-            Editar Perfil
-          </button>
+      <div className="perfil-left-column">
+        <div className="perfil-foto-container">
+          <img
+            src={foto || "/imagenes/user.png"}
+            alt="Foto de perfil"
+            className="perfil-foto-circular"
+          />
         </div>
-      )}
 
-      {/* Vista editable */}
-      {editando && (
-        <form className="perfil-form" onSubmit={(e) => e.preventDefault()}>
-          <label>Nombre:</label>
-          <input
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-          />
+        <div className="perfil-nombre-pequeno">
+          {nombre} {apellido}
+          <small>Usuario HuertoHogar</small>
+        </div>
 
-          <label>Apellido:</label>
-          <input
-            value={apellido}
-            onChange={(e) => setApellido(e.target.value)}
-          />
+        <hr className="divider-line" />
 
-          <label>Correo:</label>
-          <input
-            type="email"
-            value={correo}
-            onChange={(e) => setCorreo(e.target.value)}
-          />
+        <div className="perfil-contacto">
+          <p><span>📞</span> {telefono || "Agregar número"}</p>
+          <p><span>📧</span> {correo}</p>
+          <p><span>📍</span> {ciudad || "Agregar ciudad"}</p>
+          {direccion && <p><span>🏠</span> {direccion}</p>}
+        </div>
+      </div>
 
-          <button onClick={guardarCambios}>Guardar</button>
+      <div className="perfil-right-column">
+        <h1 className="perfil-nombre-titulo">{nombre} {apellido}</h1>
+        <p className="perfil-rol-descripcion">
+          Administrador de tu perfil HuertoHogar.
+        </p>
 
-          <button
-            type="button"
-            style={{ marginTop: "10px", background: "#666" }}
-            onClick={() => setEditando(false)}
-          >
-            Cancelar
-          </button>
-        </form>
-      )}
+        {mensaje && (
+          <p className="mensaje-feedback success-message">{mensaje}</p>
+        )}
 
-      {mensaje && (
-        <p className="mensaje-feedback success-message">{mensaje}</p>
-      )}
+        {!editando && (
+          <div className="perfil-info">
+            <button onClick={() => setEditando(true)}>
+              ⚙️ Editar Perfil
+            </button>
+          </div>
+        )}
+
+        {editando && (
+          <form className="perfil-form" onSubmit={(e) => e.preventDefault()}>
+
+            <label>Nombre:</label>
+            <input value={nombre} onChange={(e) => setNombre(e.target.value)} />
+
+            <label>Apellido:</label>
+            <input value={apellido} onChange={(e) => setApellido(e.target.value)} />
+
+            <label>Correo:</label>
+            <input type="email" value={correo} readOnly className="input-readonly" />
+
+            <label>Teléfono:</label>
+            <input value={telefono} onChange={(e) => setTelefono(e.target.value)} />
+
+            <label>Ciudad:</label>
+            <input value={ciudad} onChange={(e) => setCiudad(e.target.value)} />
+
+            <label>Dirección:</label>
+            <input value={direccion} onChange={(e) => setDireccion(e.target.value)} />
+
+            <label>Foto de perfil:</label>
+            <input type="file" accept="image/*" onChange={handleImgChange} />
+
+            <button onClick={guardarCambios}>Guardar Cambios</button>
+            <button type="button" onClick={cancelarEdicion} style={{ background: "#666" }}>
+              Cancelar
+            </button>
+          </form>
+        )}
+      </div>
     </div>
   );
 }
