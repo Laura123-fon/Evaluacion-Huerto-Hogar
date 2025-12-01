@@ -2071,22 +2071,9 @@ header {
   text-align: center;
   font-weight: 600;
 }
-/* ===========================================================
-   RESPONSIVIDAD MEJORADA
-=========================================================== */
-@media (max-width: 900px) {
-  .perfil-card-layout {
-    transform: none !important;
-    width: 95%;
-    margin: 2rem auto;
-  }
 
-  .perfil-form {
-    transform: none !important;
-  }
-}
 
-@media (max-width: 768px) {
+@media (max-width: 1020px) {
   .perfil-card-layout {
     flex-direction: column;
     transform: none !important;
