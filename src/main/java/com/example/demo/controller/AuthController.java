@@ -33,7 +33,7 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody Map<String, String> body) {
         String username = body.get("username");
         String password = body.get("password");
-        String role = "USER";
+        String role = "ADMIN";
 
         if (username == null || password == null || username.isBlank() || password.isBlank()) {
             return ResponseEntity.badRequest()
