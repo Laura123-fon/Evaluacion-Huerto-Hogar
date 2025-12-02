@@ -18,9 +18,8 @@ public class ProductController {
     private ProductService productService;
 
     // Usuarios y administradores pueden ver productos
-    @GetMapping
+    @GetMapping("/getAllProducts")
     @Operation(summary = "View a list of available products")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public List<Product> getAllProducts() {
         return productService.getAllProducts();
     }
