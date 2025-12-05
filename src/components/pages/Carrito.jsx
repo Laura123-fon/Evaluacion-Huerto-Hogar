@@ -12,9 +12,6 @@ export default function Carrito() {
 
   const navigate = useNavigate();
 
-  /** =====================================================
-   *  ESTADO DE CLIENTE (CARGA DEL FORM + DATOS DE USUARIO)
-   *  ===================================================== */
   const [cliente, setCliente] = useState(() => {
     const savedData = localStorage.getItem(FORM_STORAGE_KEY);
     const initialForm = savedData ? JSON.parse(savedData) : {};
@@ -35,22 +32,16 @@ export default function Carrito() {
     };
   });
 
-  /** =====================================================
-   *  GUARDAR FORMULARIO EN LOCALSTORAGE AUTOMÁTICAMENTE
-   *  ===================================================== */
   useEffect(() => {
     const { nombre, apellido, correo, ...soloDireccion } = cliente;
     localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(soloDireccion));
   }, [cliente]);
 
-  /** =====================================================
-   *  MANEJO DE CANTIDADES
-   *  ===================================================== */
+
   const aumentarCantidad = (id, cantidad) => {
     const producto = carrito.find((p) => p.id === id);
     if (!producto) return;
 
-    // Control básico de stock (si implementas stock real)
     if (producto.stock && cantidad >= producto.stock) return;
 
     actualizarCantidad(id, cantidad + 1);
@@ -71,9 +62,6 @@ export default function Carrito() {
 
   const eliminarProducto = (id) => eliminarDelCarrito(id);
 
-  /** =====================================================
-   *  TOTALES
-   *  ===================================================== */
   const subTotal = carrito.reduce(
     (acc, item) => acc + item.precio * item.cantidad,
     0
@@ -84,16 +72,11 @@ export default function Carrito() {
 
   const formatCLP = (n) => n.toLocaleString("es-CL");
 
-  /** =====================================================
-   *  MANEJO FORMULARIO
-   *  ===================================================== */
+
   const handleChange = (e) => {
     setCliente({ ...cliente, [e.target.name]: e.target.value });
   };
 
-  /** =====================================================
-   *  FINALIZAR COMPRA
-   *  ===================================================== */
   const handleCompra = (e) => {
     e.preventDefault();
 
@@ -135,7 +118,6 @@ export default function Carrito() {
 
     agregarBoleta(nuevaBoleta);
 
-    // Limpieza tras generar boleta
     limpiarCarrito();
     localStorage.removeItem(FORM_STORAGE_KEY);
 
@@ -155,9 +137,7 @@ export default function Carrito() {
     });
   };
 
-  /** =====================================================
-   *  RENDERIZADO
-   *  ===================================================== */
+
   return (
     <div className="carrito-container">
       <h2 className="titulo-carrito">Carrito Huerto Hogar</h2>
@@ -176,7 +156,6 @@ export default function Carrito() {
         </p>
       ) : (
         <form className="carrito-wrapper" onSubmit={handleCompra}>
-          {/* ===================== TABLA DEL CARRITO ===================== */}
           <div className="cart-content-left">
             <table className="tabla-carrito">
               <thead>
@@ -263,7 +242,6 @@ export default function Carrito() {
             </div>
           </div>
 
-          {/* ===================== RESUMEN + DIRECCIÓN ===================== */}
           <div className="order-summary">
             <h3>Orden de Envío</h3>
 

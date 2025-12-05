@@ -5,14 +5,10 @@ import Catalogo from "./Catalogo";
 import { CartContext } from "../organisms/CartContext";
 import { BrowserRouter } from "react-router-dom";
 
-// --- Mocks necesarios ---
 jest.mock("../organisms/Product", () => ({ producto, onAddToCart, isMaxedOut }) => (
   <div data-testid="product-card">
     <p>{producto.nombre}</p>
-    <button
-      disabled={isMaxedOut}
-      onClick={() => onAddToCart(producto)}
-    >
+    <button disabled={isMaxedOut} onClick={() => onAddToCart(producto)}>
       Agregar
     </button>
   </div>
@@ -28,7 +24,6 @@ jest.mock("react-router-dom", () => ({
   useNavigate: () => mockNavigate
 }));
 
-// --- Wrapper con contexto ---
 const renderWithContext = (ui, carrito = [], agregarAlCarrito = jest.fn()) => {
   return render(
     <CartContext.Provider value={{ carrito, agregarAlCarrito }}>
@@ -36,11 +31,6 @@ const renderWithContext = (ui, carrito = [], agregarAlCarrito = jest.fn()) => {
     </CartContext.Provider>
   );
 };
-  
-
-// ===========================================================
-//                         TESTS
-// ===========================================================
 
 test("1. Renderiza el título del catálogo", () => {
   renderWithContext(<Catalogo />);
@@ -54,9 +44,7 @@ test("2. Renderiza al menos 1 producto al iniciar", () => {
 
 test("3. Botón 'Todos' activa filtro 'all'", () => {
   renderWithContext(<Catalogo />);
-
   fireEvent.click(screen.getByText("Todos"));
-
   const btn = screen.getByText("Todos");
   expect(btn.classList.contains("active")).toBe(true);
 });
@@ -73,11 +61,8 @@ test("5. Filtra por verduras correctamente", () => {
   expect(screen.getAllByTestId("product-card").length).toBe(4);
 });
 
-test("6. Muestra mensaje cuando un filtro no tiene productos (simulado)", () => {
-  // truco: usamos un filtro inexistente
+test("6. Muestra mensaje cuando un filtro no tiene productos", () => {
   renderWithContext(<Catalogo />);
-
-  // fuerza el estado interno del botón usando un fireEvent extraño
   fireEvent.click(screen.getByText("Productos Lácteos"));
   expect(screen.queryByText("No hay productos disponibles")).not.toBeInTheDocument();
 });
@@ -85,10 +70,8 @@ test("6. Muestra mensaje cuando un filtro no tiene productos (simulado)", () => 
 test("7. Cuando agrego un producto aparece el Toast", () => {
   const mockAgregar = jest.fn();
   renderWithContext(<Catalogo />, [], mockAgregar);
-
   const btn = screen.getAllByText("Agregar")[0];
   fireEvent.click(btn);
-
   expect(screen.getByTestId("toast")).toBeInTheDocument();
 });
 
@@ -97,24 +80,19 @@ test("8. El contador del carrito muestra los items correctos", () => {
     { id: "FR001", cantidad: 2 },
     { id: "VR001", cantidad: 1 }
   ];
-
   renderWithContext(<Catalogo />, carrito);
-
   expect(screen.getByText("Carrito: 3 items")).toBeInTheDocument();
 });
 
 test("9. Botón 'Ir al Carrito' activa navigate('/carrito')", () => {
   renderWithContext(<Catalogo />);
-
   fireEvent.click(screen.getByText("🛒 Ir al Carrito"));
   expect(mockNavigate).toHaveBeenCalledWith("/carrito");
 });
 
 test("10. Cebollas Moradas tiene stock, su botón debe estar habilitado", () => {
   renderWithContext(<Catalogo />);
-
   const cebollaCard = screen.getByText("Cebollas Moradas").closest("div");
   const btn = cebollaCard.querySelector("button");
-
   expect(btn.disabled).toBe(false);
 });

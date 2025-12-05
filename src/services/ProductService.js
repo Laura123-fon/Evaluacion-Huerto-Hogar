@@ -2,7 +2,8 @@ import api from '../api/AxiosConfig';
 
 class ProductService {
   getAllProducts() {
-    return api.get('/products');
+     return api.get("/products/getAllProducts");
+
   }
 
   getProductById(id) {

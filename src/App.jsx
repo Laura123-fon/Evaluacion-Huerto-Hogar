@@ -1,19 +1,15 @@
-// src/App.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 
-// Pages
 import LandingPage from "./components/pages/LandingPage";
 import Catalogo from "./components/pages/Catalogo";
 import Carrito from "./components/pages/Carrito";
 import BoletaPage from "./components/pages/BoletaPage";
 import Perfil from "./components/pages/Perfil";
 
-// Componentes de usuario
 import Login from "./components/organisms/Login";
 import Register from "./components/organisms/Register";
 
-// Extra
 import Header from "./components/organisms/Header";
 import Footer from "./components/organisms/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -29,7 +25,6 @@ export default function App() {
       <main className="flex-grow">
         <Routes>
           
-          {/* 1️⃣ SI NO está autenticado, "/" muestra Login */}
           <Route
             path="/"
             element={
@@ -41,7 +36,6 @@ export default function App() {
             }
           />
 
-          {/* 2️⃣ Rutas Login y Registro (solo si NO está logueado) */}
           <Route
             path="/login"
             element={
@@ -56,19 +50,22 @@ export default function App() {
             }
           />
 
-          {/* 3️⃣ Rutas protegidas */}
           <Route path="/catalog" element={<ProtectedRoute><Catalogo /></ProtectedRoute>} />
           <Route path="/carrito" element={<ProtectedRoute><Carrito /></ProtectedRoute>} />
           <Route path="/historial" element={<ProtectedRoute><BoletaPage /></ProtectedRoute>} />
           <Route path="/perfil" element={<ProtectedRoute><Perfil /></ProtectedRoute>} />
 
-          {/* 4️⃣ Catch-all */}
           <Route path="*" element={<Navigate to="/" replace />} />
 
         </Routes>
       </main>
 
-      {isAuthenticated && <Footer onLogout={logout} />}
+      {isAuthenticated && (
+          <Footer 
+            isLogged={isAuthenticated}
+            onLogout={logout} 
+          />
+        )}
     </div>
   );
 }

@@ -16,9 +16,6 @@ export default function Boleta({
   return (
     <div className="boleta-documento">
 
-      {/* ===========================
-          ENCABEZADO
-      ============================ */}
       <div className="boleta-header">
         <div>
           <h2>Huerto Hogar</h2>
@@ -38,9 +35,7 @@ export default function Boleta({
         </div>
       </div>
 
-      {/* ===========================
-          DATOS CLIENTE
-      ============================ */}
+
       <div>
         <h4>Datos de Cliente y Envío</h4>
 
@@ -60,9 +55,6 @@ export default function Boleta({
         </div>
       </div>
 
-      {/* ===========================
-          DETALLE PRODUCTOS
-      ============================ */}
       <div className="detalle-productos">
         <h4>Detalle de Productos</h4>
 
@@ -89,9 +81,6 @@ export default function Boleta({
         </table>
       </div>
 
-      {/* ===========================
-          TOTALES
-      ============================ */}
       <div className="boleta-totales">
         <p>
           <span>Subtotal Productos:</span>
@@ -109,9 +98,7 @@ export default function Boleta({
         </p>
       </div>
 
-      {/* ===========================
-          FOOTER
-      ============================ */}
+
       <div className="boleta-footer">
         <p>¡Gracias por tu compra en Huerto Hogar!</p>
 

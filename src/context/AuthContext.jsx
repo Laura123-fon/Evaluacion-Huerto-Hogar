@@ -1,4 +1,3 @@
-// src/context/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
@@ -8,7 +7,6 @@ export function AuthProvider({ children }) {
   const [username, setUsername] = useState(null);
   const [role, setRole] = useState(null);
 
-  // Cargar datos al inicio
   useEffect(() => {
     const t = localStorage.getItem("token");
     const u = localStorage.getItem("username");
@@ -21,7 +19,6 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  // Login global
   const login = (token, username, role) => {
     setToken(token);
     setUsername(username);
@@ -32,7 +29,6 @@ export function AuthProvider({ children }) {
     localStorage.setItem("role", role);
   };
 
-  // Logout global
   const logout = () => {
     setToken(null);
     setUsername(null);

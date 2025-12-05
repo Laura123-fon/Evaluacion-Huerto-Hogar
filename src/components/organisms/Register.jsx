@@ -1,13 +1,11 @@
-// src/components/organisms/Register.jsx (Reemplazar)
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { register as registerService } from '../../services/AuthService'; // La función de la API
+import { register as registerService } from "../../services/AuthService";
 
 export default function Register() {
-  // Conservamos el estado del formulario original por el HTML/diseño
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
-  const [correo, setCorreo] = useState(""); // Este será nuestro 'username' para la API
+  const [correo, setCorreo] = useState("");
   const [clave1, setClave1] = useState("");
   const [clave2, setClave2] = useState("");
   const [error, setError] = useState("");
@@ -22,7 +20,7 @@ export default function Register() {
 
     const gmailRegex = /^[a-zA-Z0-9._%+-]{6,}@gmail\.com$/;
     if (!gmailRegex.test(correo)) {
-      setError("El correo debe ser Gmail y tener al menos 6 caracteres antes del @(ejemplo@gmail.com)");
+      setError("El correo debe ser Gmail y tener al menos 6 caracteres antes del @");
       setLoading(false);
       return;
     }
@@ -32,34 +30,22 @@ export default function Register() {
       setLoading(false);
       return;
     }
-    
-    // 🔑 Lógica de conexión a la API
+
     try {
-        // La API de backend solo espera un 'username' y 'password'.
-        await registerService(correo, clave1, "USER"); // Registramos con rol por defecto "USER"
-        
-        // Si el registro es exitoso, redireccionamos al login
-        setError("✅ Registro exitoso. Ahora inicia sesión.");
-        
-        // Limpiamos los campos (opcional)
-        setNombre("");
-        setApellido("");
-        setCorreo("");
-        setClave1("");
-        setClave2("");
-        
-        setTimeout(() => navigate('/login'), 1200); // Redirigir al Login
+      await registerService(correo, clave1, "USER");
+      setError("Registro exitoso. Ahora inicia sesión.");
+      setTimeout(() => navigate("/login"), 1200);
     } catch (err) {
-        setError(err.response?.data?.error || 'Error en el registro. Intenta con otro correo.');
+      setError(err.response?.data?.error || "Error en el registro.");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    // Conserva tu diseño original
-    <div className="container">  
+    <div className="container">
       <h2>Crear una cuenta</h2>
+
       <form onSubmit={handleSubmit}>
         <label>Nombre:</label>
         <input value={nombre} onChange={(e) => setNombre(e.target.value)} required />
@@ -77,14 +63,13 @@ export default function Register() {
         <input type="password" value={clave2} onChange={(e) => setClave2(e.target.value)} required />
 
         <button type="submit" disabled={loading}>
-          {loading ? 'Cargando...' : 'Registrarse'}
+          {loading ? "Cargando..." : "Registrarse"}
         </button>
       </form>
 
       <p>
         ¿Ya tienes cuenta?{" "}
-        {/* Usamos navigate para ir a la ruta /login definida en App.jsx */}
-        <a href="#" onClick={(e) => { e.preventDefault(); navigate('/login'); }}>
+        <a onClick={() => navigate("/login")}>
           Iniciar sesión
         </a>
       </p>

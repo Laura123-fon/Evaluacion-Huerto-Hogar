@@ -11,10 +11,9 @@ export async function login(username, password) {
     
     const { token, username: user, role } = response.data;
     
-    // Guardar en localStorage
     localStorage.setItem('token', token);
     localStorage.setItem('username', user);
-    localStorage.setItem('role', role); // ⭐ GUARDAR ROL
+    localStorage.setItem('role', role); 
     
     return { token, username: user, role };
   } catch (error) {
@@ -23,12 +22,12 @@ export async function login(username, password) {
   }
 }
 
-export async function register(username, password, role = 'USER') {
+export async function register(username, password, role = 'ADMIN') {
   try {
     const response = await axios.post(`${AUTH_URL}/register`, { 
       username, 
       password,
-      role // ⭐ ENVIAR ROL
+      role 
     });
     return response.data;
   } catch (error) {
@@ -40,7 +39,7 @@ export async function register(username, password, role = 'USER') {
 export function logout() {
   localStorage.removeItem('token');
   localStorage.removeItem('username');
-  localStorage.removeItem('role'); // ⭐ LIMPIAR ROL
+  localStorage.removeItem('role'); 
 }
 
 export function isAuthenticated() {
@@ -52,9 +51,9 @@ export function getUsername() {
 }
 
 export function getRole() {
-  return localStorage.getItem('role'); // ⭐ OBTENER ROL
+  return localStorage.getItem('role'); 
 }
 
 export function isAdmin() {
-  return localStorage.getItem('role') === 'ADMIN'; // ⭐ VERIFICAR SI ES ADMIN
+  return localStorage.getItem('role') === 'ADMIN'; 
 }

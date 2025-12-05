@@ -3,7 +3,7 @@ import React, { useState } from "react";
 export default function Product({ producto, onAddToCart, isMaxedOut = false }) {
   const {
     nombre,
-    imagen,
+    imagenUrl,
     descripcion,
     precio,
     stock,
@@ -15,7 +15,6 @@ export default function Product({ producto, onAddToCart, isMaxedOut = false }) {
 
   const [anim, setAnim] = useState(false);
 
-  // 🔒 Lógica central de añade
   const disabled = stock === 0 || isMaxedOut;
 
   const handleAdd = () => {
@@ -59,7 +58,7 @@ export default function Product({ producto, onAddToCart, isMaxedOut = false }) {
       <div className="product-row">
 
         <div className="product-image-side">
-          <img src={imagen} alt={nombre} />
+          <img src={imagenUrl} alt={nombre} />
         </div>
 
         <div className="product-info-side">
