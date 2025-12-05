@@ -17,17 +17,15 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // Registro con rol específico
     public User register(String username, String password, String role) {
         User user = User.builder()
                 .username(username)
                 .password(passwordEncoder.encode(password))
-                .role(role != null ? role : "USER") // Por defecto USER
+                .role(role != null ? role : "USER")
                 .build();
         return userRepository.save(user);
     }
 
-    // Registro simple (siempre como USER)
     public User register(String username, String password) {
         return register(username, password, "USER");
     }

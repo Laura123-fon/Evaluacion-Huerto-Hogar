@@ -17,7 +17,6 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    // Usuarios y administradores pueden ver productos
     @GetMapping("/getAllProducts")
     @Operation(summary = "View a list of available products")
     public List<Product> getAllProducts() {
@@ -31,7 +30,6 @@ public class ProductController {
         return productService.getProductById(id);
     }
 
-    // Solo Admin puede crear
     @PostMapping
     @Operation(summary = "Add a new product (Admin only)")
     @PreAuthorize("hasRole('ADMIN')")
@@ -39,7 +37,6 @@ public class ProductController {
         return productService.saveProduct(product);
     }
 
-    // Solo Admin puede actualizar
     @PutMapping("/{id}")
     @Operation(summary = "Update an existing product (Admin only)")
     @PreAuthorize("hasRole('ADMIN')")
@@ -47,7 +44,6 @@ public class ProductController {
         return productService.updateProduct(id, product);
     }
 
-    // Solo Admin puede eliminar
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a product (Admin only)")
     @PreAuthorize("hasRole('ADMIN')")

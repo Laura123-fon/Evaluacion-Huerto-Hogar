@@ -18,7 +18,6 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Check if data already exists to avoid duplicates on each startup
         if (productRepository.count() == 0) {
             ArrayList<Product> products = new ArrayList<>();
 

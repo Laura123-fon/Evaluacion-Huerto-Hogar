@@ -19,7 +19,6 @@ public class ProductService {
     }
 
     public Product getProductById(Long id) {
-        // Mejorado para devolver el elemento o lanzar una excepción específica
         return productRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Producto no encontrado con id: " + id));
     }
@@ -28,7 +27,6 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    // ⭐ MEJORA: Lanza excepción si no existe
     public Product updateProduct(Long id, Product updated) {
         Product existing = productRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Producto a actualizar no encontrado con id: " + id));
@@ -40,7 +38,7 @@ public class ProductService {
         existing.setImagenUrl(updated.getImagenUrl());
         existing.setOrigen(updated.getOrigen());
         existing.setSostenibilidad(updated.getSostenibilidad());
-        existing.setCategoria(updated.getCategoria()); // Asegúrate que este campo existe en Product
+        existing.setCategoria(updated.getCategoria());
         existing.setReceta(updated.getReceta());
         existing.setCalificacion(updated.getCalificacion());
 

@@ -33,8 +33,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        // ⭐ NOTA: El SecurityConfig ya maneja las rutas públicas (.permitAll()),
-        // por lo que ya no es necesario el 'if' que saltaba esas rutas.
 
         String authHeader = request.getHeader("Authorization");
 
@@ -42,14 +40,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             try {
                 String token = authHeader.substring(7);
 
-                // ⭐ VALIDAR EL TOKEN
                 if (jwtService.isTokenValid(token)) {
                     String username = jwtService.extractUsername(token);
 
-                    // ⭐ CARGAR EL USUARIO
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                    // ⭐ CREAR LA AUTENTICACIÓN
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails,
@@ -59,17 +54,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    // ⭐ ESTABLECER LA AUTENTICACIÓN EN EL CONTEXTO DE SEGURIDAD
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 } else {
                     log.warn("❌ Token inválido o expirado para la ruta: {}", request.getRequestURI());
                 }
             } catch (Exception e) {
-                // Esto podría capturar errores de parsing del token o UserNotFound
                 log.error("Error al procesar el token JWT: {}", e.getMessage());
             }
         } else {
-            // Esto es normal si no es una ruta protegida. Solo advertimos si es DEBUG.
             log.debug("⚠️ No hay Authorization header con 'Bearer ' para la ruta: {}", request.getRequestURI());
         }
 
