@@ -21,13 +21,13 @@ public class UserService {
         User user = User.builder()
                 .username(username)
                 .password(passwordEncoder.encode(password))
-                .role(role != null ? role : "USER")
+                .role(role != null ? role : "ADMIN")
                 .build();
         return userRepository.save(user);
     }
 
     public User register(String username, String password) {
-        return register(username, password, "USER");
+        return register(username, password, "ADMIN");
     }
 
     public Optional<User> findByUsername(String username) {

@@ -27,6 +27,8 @@ public class AuthController {
         this.jwtService = jwtService;
         this.userService = userService;
     }
+
+    // 🔹 Registro: solo username (correo) y password
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Map<String, String> body) {
         String username = body.get("username");
@@ -47,16 +49,19 @@ public class AuthController {
         }
     }
 
+    // 🔹 Login - Lógica simplificada
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
         String username = body.get("username");
         String password = body.get("password");
 
         try {
+            // Intenta autenticar. Lanza BadCredentialsException si falla.
             Authentication auth = authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password)
             );
 
+            // Si llega aquí, la autenticación fue exitosa. Buscamos el usuario.
             User user = userService.findByUsername(username)
                     .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado después de autenticación exitosa"));
 
@@ -75,13 +80,16 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "Error interno: " + e.getMessage()));
         } catch (Exception e) {
+            // Maneja otros errores como problemas de conexión a la BD, etc.
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Error al procesar la solicitud"));
         }
     }
 
+    // 🔹 Validar token
     @GetMapping("/validate")
     public ResponseEntity<?> validateToken() {
+        // Si llega a este punto (pasando el filtro JWT), el token es válido
         return ResponseEntity.ok(Map.of("valid", true));
     }
 }

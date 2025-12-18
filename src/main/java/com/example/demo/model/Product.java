@@ -21,5 +21,6 @@ public class Product {
     @Column private String categoria;
     @Column private String receta;
     @Column private Double calificacion;
+    @Column private Double descuento;
 
 }
